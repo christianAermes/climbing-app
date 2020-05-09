@@ -1,0 +1,450 @@
+:root {
+  --sidebar-width: 135px;
+  --navbar-height: 65px;
+  --darkblue: #252E3A;
+  --darkgray: #333;
+  --main-bg: #F2F2F2;
+}
+
+
+.App {
+  text-align: center;
+  background: var(--main-bg);
+}
+input:focus {
+  outline: none;
+}
+
+
+/*-------- Navbar ---------------*/
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 65px;
+  width: 100%;
+  background: var(--darkblue);
+  display: grid;
+  grid-template-columns: auto auto 80px;
+  align-items: center;
+  z-index: 99;
+}
+.navbar h1 {
+  color: #fff;
+  font-size: 24px;
+  padding: 0;
+  margin: 0;
+  margin-left: 20px;
+  justify-self: start;
+}
+.navbar button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  justify-self: end;
+}
+.navbar button:hover, .navbar img:hover {
+  cursor: pointer;
+}
+.navbar img {
+  height: 50px;
+  width: auto;
+  justify-self: end;
+  margin-right: 20px;
+}
+
+
+/*-------- Sidebar ---------------*/
+.sidebar {
+  height: calc(100vh - var(--navbar-height) - 35px);
+  width: var(--sidebar-width);
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  padding-top: 35px;
+  margin: 0;
+  background: var(--darkgray);
+  display: grid;
+  grid-template-rows: repeat(4, 50px);
+  row-gap: 20px;
+  z-index: 99;
+}
+.sidebar button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+}
+.sidebar button:hover {
+  cursor: pointer;
+}
+
+
+
+/*-------- Container for main screens ---------------*/
+.main-container {
+  background: var(--main-bg);
+  position: absolute;
+  top: var(--navbar-height);
+  left: var(--sidebar-width);
+  padding: 20px 10px;
+  width: calc(100% - var(--sidebar-width) - 20px);
+  min-height: calc(100vh - var(--navbar-height) - 10px);
+}
+.sub-container {
+  width: calc(90%);
+  max-width: 800px;
+  background: var(--darkblue);
+  margin: auto;
+  margin-bottom: 30px;
+  padding: 15px 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 7px;
+}
+.two-col-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  row-gap: 10px;
+  column-gap: 10px;
+}
+
+
+/*-------- Settings ---------------*/
+.profile-img, .login-settings {
+  width: 100%;
+  align-self: center;
+  box-sizing: border-box;
+  justify-self: center;
+}
+.profile-img {
+  max-width: 200px;
+}
+.settings-block {
+  display: grid;
+  grid-template-columns: minmax(50px, 1fr);
+  row-gap: 10px;
+  background: var(--main-bg);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.settings-block input {
+  height: 15px;
+  border-radius: 7px;
+  padding: 7px;
+  border: 1px solid #b4b4b4;
+}
+.grade-settings {
+  color: #fff;
+  font-size: 20px;
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  align-items: center;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 10px 20px;
+  margin: 10px 0;
+}
+.boulder-grades {
+  background: #629DA5;
+}
+.route-grades {
+  background: #7FB3BA;
+}
+#save-settings-changes-btn, #save-add-sessions-btn {
+  border: none;
+  background: #367644;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 20px;
+  padding: 7px;
+}
+#delete-account-btn {
+  background: #B53A3A;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 20px;
+  padding: 7px;
+}
+#delete-account-btn:hover, #save-settings-changes-btn:hover, #save-add-sessions-btn:hover {
+  cursor: pointer;
+}
+
+/*-------- Infoboxes on Overview Screen------------*/
+.infobox-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 20px;
+}
+.infobox {
+  color: #fff;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.info-name {
+  font-size: 16px;
+  border-radius: 7px 7px 0 0;
+  padding: 5px 0;
+}
+.info-count {
+  font-size: 24px;
+  border-radius: 0 0 7px 7px;
+  padding: 10px 0;
+}
+
+
+/*-------- Graph Component---------------*/
+.graph-container {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 20px;
+}
+.graph-border {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  background: #FFFFFF;
+  border: 1px solid #A2A2A2;
+  border-radius: 5px;
+}
+.graph {
+  width: calc(85% - 17px);
+  height: calc(85% - 28px);
+  background: var(--darkblue);
+  padding: 20px;
+}
+
+
+/*-------- AddSession Screen ---------------*/
+.dropdown .dropBtn {
+  width: 100%;
+  cursor: pointer;
+  font-size: 16px;  
+  border: none;
+  outline: none;
+  color: var(--darkgray);
+  padding: 14px 16px;
+  background-color: var(--main-bg);
+  font-family: inherit;
+  margin: 0;
+  border-radius: 5px;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-content button {
+  width: 100%;
+  color: black;
+  border: none;
+  background-color: #7FB3BA;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+.dropdown-content button:hover {
+  cursor: pointer;
+  background: #629DA5;
+}
+.show {
+  display: block;
+}
+
+/*---- Add Indoor Sessions -----*/
+.session input {
+  height: 15px;
+  border-radius: 7px;
+  padding: 7px;
+  border: 1px solid #b4b4b4;
+  margin: 10px;
+}
+.table-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #248499;
+  color: #fff;
+  border-radius: 5px 5px 0 0;
+  margin-top: 10px;
+  font-size: 20px;
+}
+.table-body {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr 1fr;
+  background: #fff;
+  border-radius: 0 0 5px 5px;
+  margin-bottom: 30px;
+}
+.hangboard-input-container {
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+.hangboard-input-container input {
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+}
+.hangboard-strength-test {
+  width: 80%;
+  max-width: 500px;
+  margin: auto;
+  background: #629DA5;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 7px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+.hangboard-strength-test p {
+  padding-top: 5px;
+  margin-bottom: 5px;
+}
+.grade-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(25px, 100px));
+}
+.grade-selector input {
+  max-width: 80%;
+}
+
+
+/*-------- Login and Registration---------------*/
+.background {
+  background: url("./images/bg2.png") no-repeat center center,
+    #000;
+  background-size: contain;
+  min-height: 100vh;
+}
+.background h1 {
+  text-align: center;
+  color: #fff;
+  font-size: 48px;
+  padding-top: 5vh;
+  margin: 0;
+}
+.login-form {
+  padding-top: 10vh;
+  display: grid;
+  width: 50%;
+  max-width: 500px;
+  margin: auto;
+  row-gap: 20px;
+}
+.login-form input {
+  height: 20px;
+  border-radius: 7px;
+  padding: 15px;
+  border: 1px solid #b4b4b4;
+}
+.login-form button {
+  background: #248499;
+  border-radius: 7px;
+  border: none;
+  height: 40px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  width: 200px;
+  justify-self: center;
+}
+.login-form button:hover {
+  cursor: pointer;
+}
+
+@keyframes blink {
+  0%   {box-shadow:  0px 0px 7px 7px #B53A3A99;}
+  50%  {box-shadow:  0px 0px 7px 7px #B53A3A33;}
+  100% {box-shadow:  0px 0px 7px 7px #B53A3A99;}
+}
+
+.blinking {
+  animation-name: blink;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+
+
+
+/*---------- Table Stuff -----------*/
+.overview-table-settings {
+  margin-top: 50px;
+  height: 50px;
+  background:  #888; /*#C4C4C4*/
+}
+
+
+
+.overview-table {
+  width: 100%;
+  border-spacing: 0;
+  margin-top: 20px;
+}
+.overview-table th {
+  padding: 5px;
+  color: white;
+}
+.overview-table td {
+  padding: 5px;
+  
+}
+.overview-table td:first-child {
+  border-left: 2px solid #888;
+}
+.overview-table td:last-child {
+  border-right: 2px solid #888;
+}
+.overview-table tr:last-child {
+  border-bottom: 2px solid #888;
+}
+
+
+.overview-table th:first-child {
+  border-radius: 5px 0 0 5px;
+}
+.overview-table th:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.overview-table-head {
+  margin-top: 20px;
+  background: #248499;
+  height: 50px;
+}
+.overview-table-body {
+  margin-top: 20px;
+  min-height: 200px;
+  background: #fff;
+}
+
+.white-row {
+  background-color: #fff;
+}
+.gray-row {
+  background-color: #eee;
+}
+.bottom-line td {
+  /* border-radius: 0 0 5px 5px; */
+  border-bottom: 2px solid #888;
+}
+
+.test {
+  background: #333;
+  color: #fff;
+  border: none;
+  display: inline;
+}
