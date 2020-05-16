@@ -7,6 +7,7 @@ import userCredentials from "./database/selectUserLogin"
 import insertNewUser from "./database/insertNewUser"
 import getIndoorSessions from "./database/getIndoorSessions"
 import getOutdoorSessions from "./database/getOudoorSessions"
+import selectUserSettings from "./database/selectUserSettings"
 
 import config from "./config"
 
@@ -26,7 +27,14 @@ app.post("/login", async (request, response) => {
         let password = request.body.password
 
         let loginData = await userCredentials(username)
-        
+        console.log(loginData[0])
+        let data = loginData[0]
+        let settings = {
+            boulderGrades: data.boulderGradeFB? "fb" : "v",
+            routeGrades: data.routesGradeUIAA? "UIAA" : data.routesGradeFrench? "french" : "YDS",
+            profileImg: data.profile_img
+        }
+
         bcrypt.compare(password, loginData[0].password, (err, res)=>{
             if (err) {
                 console.log(err)
@@ -34,7 +42,7 @@ app.post("/login", async (request, response) => {
             }
             if (res) {
                 console.log("Submitted Password is correct")
-                return response.json({success: true, message: "Submitted Password is correct."})
+                return response.json({success: true, message: "Submitted Password is correct.", settings: settings})
             } 
             else {
                 console.log("Passwords do not match")
@@ -43,8 +51,9 @@ app.post("/login", async (request, response) => {
         })
         
     } catch (e) {
-        console.log("User name or password incorrect.")
-        return response.json({success: false, message: "User name or password incorrect."})
+        console.log("Another error occured.")
+        console.log(e)
+        return response.json({success: false, message: "An error occured during login."})
     }
 })
 
@@ -62,17 +71,6 @@ app.post("/register", async (request, response) => {
         console.log("e")
         return response.json({success: false, message: "An error occured while registering."})
     }
-})
-
-import {createDummyDataIndoor, createDummyDataOutdoor} from "./createDummyData"
-app.get("/insert", async (request, response) => {
-    try {
-        // createDummyDataIndoor()
-        createDummyDataOutdoor()
-    } catch (e) {
-        console.log(e)
-    }
-    
 })
 
 app.post("/getIndoorSessions", async (request, response) => {
@@ -97,4 +95,34 @@ app.post("/getOutdoorSessions", async (request, response) => {
         console.log(e)
         return response.json({success: false, data: []})
     }
+})
+
+app.post("/getUserSettings", async (request, response) => {
+    console.log("get me")
+    try {
+        let username = request.body.username
+        let res = await selectUserSettings(username)
+
+        console.log(res)
+        return response.json({success:true, data: res})
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+
+
+
+
+
+
+import {createDummyDataIndoor, createDummyDataOutdoor} from "./createDummyData"
+app.get("/insert", async (request, response) => {
+    try {
+        // createDummyDataIndoor()
+        createDummyDataOutdoor()
+    } catch (e) {
+        console.log(e)
+    }
+    
 })

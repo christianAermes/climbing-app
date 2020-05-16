@@ -1,16 +1,14 @@
 import React, {Component} from 'react'
 import Infobox from './Infobox'
 import Graph from './Graph'
-import Table from './Table'
+// import Table from './Table'
 
 import {boulderGradeConversionToFB, boulderGradeConversionToV} from '../boulderGradeConversion'
 
 class OverviewScreen extends Component {
     constructor(props) {
         super(props)
-        // let this.indoorData, outdoorData, hangboardData, leaderboardData
         this.makedata = this.makedata.bind(this)
-        this.getIndoorData = this.getIndoorData.bind(this)
         this.makedata()
 
         this.state = {
@@ -20,15 +18,10 @@ class OverviewScreen extends Component {
             leaderboardData: {data: [], keys: []},
             boulderGrades: "v",
         }
-
-        
-
-        
     }
 
-    async getIndoorData() {
-        let data = {username: this.props.username}
-        const response = await fetch("http://localhost:8000/getIndoorSessions", {
+    async getData(url, request) {
+        const response = await fetch(url, {
                                         method: "POST",
                                         mode: "cors",
                                         cache: "no-cache",
@@ -38,30 +31,13 @@ class OverviewScreen extends Component {
                                         },
                                         redirect: "follow",
                                         referrerPolicy: "no-referrer",
-                                        body: JSON.stringify(data)
+                                        body: JSON.stringify(request)
         })
         return response.json()
     }
 
-    async getOutdoorData() {
-        let data = {username: this.props.username}
-        const response = await fetch("http://localhost:8000/getOutdoorSessions", {
-                                        method: "POST",
-                                        mode: "cors",
-                                        cache: "no-cache",
-                                        credentials: "same-origin",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        redirect: "follow",
-                                        referrerPolicy: "no-referrer",
-                                        body: JSON.stringify(data)
-        })
-        return response.json()
-    }
-
-    formatIndoorData(data) {
-        let indoorData = {data:[], keys: ["Max Grade", "Avg Grade"]}
+    formatClimbingSessionData(data) {
+        let formattedData = {data:[], keys: ["Max Grade", "Avg Grade"]}
         
         for (let i=0; i<data.length; i++) {
             let maxGrade = -1
@@ -79,47 +55,23 @@ class OverviewScreen extends Component {
                          "Max Grade": maxGrade,
                          "Avg Grade": avgGrade
                         }
-            indoorData.data.push(point)
+            formattedData.data.push(point)
         }
-        return indoorData
-
-    }
-
-    formatOutdoorData(data) {
-        let outdoorData = {data:[], keys: ["Max Grade", "Avg Grade"]}
-        
-        for (let i=0; i<data.length; i++) {
-            let maxGrade = -1
-            let avgGrade = 0
-            let count = 0
-            for (let grade=0; grade<19; grade++) {
-                if (data[i][`boulders_grade${grade}`] > 0 && grade > maxGrade) {
-                    maxGrade = grade
-                }
-                avgGrade += data[i][`boulders_grade${grade}`]*grade
-                count += data[i][`boulders_grade${grade}`]
-            }
-            avgGrade /= count
-            let point = {x: i, //data[i].date.substring(0,10), 
-                         "Max Grade": maxGrade,
-                         "Avg Grade": avgGrade
-                        }
-            outdoorData.data.push(point)
-        }
-        return outdoorData
+        return formattedData
 
     }
 
     async componentDidMount() {
+        console.log(this.props)
         document.querySelector(".sidebar button").style.background = "#248499"
         
-        let data_indoorDB = await this.getIndoorData()
-        let indoorData = this.formatIndoorData(data_indoorDB.data)
+        let data_indoorDB = await this.getData("http://localhost:8000/getIndoorSessions", {username: this.props.username})
+        let indoorData = this.formatClimbingSessionData(data_indoorDB.data)
         if (data_indoorDB.success) this.setState({indoorData: indoorData})
         // console.log(data_indoorDB)
 
-        let data_outdoorDB = await this.getOutdoorData()
-        let outdoorData = this.formatOutdoorData(data_outdoorDB.data)
+        let data_outdoorDB = await this.getData("http://localhost:8000/getOutdoorSessions", {username: this.props.username})
+        let outdoorData = this.formatClimbingSessionData(data_outdoorDB.data)
         if (data_outdoorDB.success) this.setState({outdoorData: outdoorData})
         // console.log(data_outdoorDB)
     }
@@ -185,8 +137,8 @@ class OverviewScreen extends Component {
                 </div>
                 <div className="graph-container">
                     <div className="graph-container">
-                        <Graph data={this.state.indoorData.data} datakeys={this.state.indoorData.keys} formatter={this.state.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph>
-                        <Graph data={this.state.outdoorData.data} datakeys={this.state.outdoorData.keys} formatter={this.state.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph>
+                        <Graph data={this.state.indoorData.data} datakeys={this.state.indoorData.keys} formatter={this.props.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph>
+                        <Graph data={this.state.outdoorData.data} datakeys={this.state.outdoorData.keys} formatter={this.props.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph>
                     </div>
                     <div className="graph-container">
                         <Graph data={this.hangboardData.data} datakeys={this.hangboardData.keys}></Graph>

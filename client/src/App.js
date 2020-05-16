@@ -66,11 +66,16 @@ class App extends Component {
         this.state = {
             login: !true,
             register: false,
-            overview: !false,
+            overview: false,
             addSession: false,
-            settings: false,
+            settings: !false,
 
-            username: "Christian"
+            username: "Christian",
+            user_settings: {
+                boulderGrades: "fb",
+                routeGrades: "french",
+                profile_img: null,
+            }
         }
         this.handleLogin           = this.handleLogin.bind(this)
         this.handleRegister        = this.handleRegister.bind(this)
@@ -79,31 +84,10 @@ class App extends Component {
         this.handleGoToOverview    = this.handleGoToOverview.bind(this)
         this.handleAddSession      = this.handleAddSession.bind(this)
         this.handleGoToSettings    = this.handleGoToSettings.bind(this)
-
-        this.postLoginData = this.postLoginData.bind(this)
-        this.postRegisterData = this.postRegisterData.bind(this)
     }
 
-    async postLoginData(username, password) {
-        let data = {username: username, password: password}
-        const response = await fetch("http://localhost:8000/login", {
-                                        method: "POST",
-                                        mode: "cors",
-                                        cache: "no-cache",
-                                        credentials: "same-origin",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        redirect: "follow",
-                                        referrerPolicy: "no-referrer",
-                                        body: JSON.stringify(data)
-        })
-        return response.json()
-    }
-
-    async postRegisterData(username, password, email) {
-        let data = {username: username, password: password, email: email}
-        const response = await fetch("http://localhost:8000/register", {
+    async postData(url, data) {
+        const response = await fetch(url, {
                                         method: "POST",
                                         mode: "cors",
                                         cache: "no-cache",
@@ -123,11 +107,17 @@ class App extends Component {
         e.preventDefault()
         let username = document.getElementById("login-username-input")
         let password = document.getElementById("login-password-input")
-        this.postLoginData(username.value, password.value).then(data=>{
+        let loginData = {username: username.value, password: password.value}
+        this.postData("http://localhost:8000/login", loginData).then(data=>{
             console.log(data)
             let correctCredentials = data.success
             if (correctCredentials) {
-                this.setState({login: false, overview:true, username: username.value})
+                this.setState({
+                    login: false, 
+                    overview:true, 
+                    username: username.value,
+                    user_settings: data.settings
+                })
                 if (username.classList.contains("blinking") && password.classList.contains("blinking")) {
                     username.classList.remove("blinking")
                     password.classList.remove("blinking")
@@ -157,7 +147,8 @@ class App extends Component {
         if (username.value !== "" && password.value !== "" && age.value !== "" && email.value !== "") {
             // check if passwords match
             if (password.value === passwordConfirm.value) {
-                this.postRegisterData(username.value, password.value, email.value).then(data=>{
+                let registerData = {username: username.value, password: password.value, email: email.value}
+                this.postData("http://localhost:8000/register", registerData).then(data=>{
                     console.log(data)
                     if (data.success) {
                         this.setState({login:true, register: false})
@@ -212,28 +203,6 @@ class App extends Component {
     
 
     render() {
-        let indoorData = []
-        for (let i=0; i<120; i++) {
-            let point = {x: i, 
-                        "Max Grade": Math.log(1+i) + Math.random(),
-                        "Avg Grade": 0.75*Math.log(1+i) + 0.5*Math.random(),
-                    }
-            indoorData.push(point)
-        }
-        let indoorDataKeys = ["Max Grade", "Avg Grade"]
-        indoorData = {data: indoorData, keys: indoorDataKeys}
-
-        let outdoorData = []
-        for (let i=0; i<12; i++) {
-            let point = {x: i*i, 
-                        "Max Grade": i+1 + Math.random(),
-                        "Avg Grade": 0.5*(i+1 + Math.random())
-                    }
-            outdoorData.push(point)
-        }
-        let outdoorDataKeys = ["Max Grade", "Avg Grade"]
-        outdoorData = {data: outdoorData, keys:outdoorDataKeys}
-
         let hangboardData = []
         for (let i=0; i<36; i++) {
             let point = {x: i, 
@@ -271,9 +240,8 @@ class App extends Component {
                 {sidebar}
                 {navbar}
                 <OverviewScreen
+                        boulderGrades={this.state.user_settings.boulderGrades}
                         username={this.state.username}
-                        indoorData={indoorData}
-                        outdoorData={outdoorData}
                         hangboardData={hangboardData}
                         leaderboardData={leaderboardData}
                         ></OverviewScreen>
@@ -294,7 +262,7 @@ class App extends Component {
                 <div className="App">
                     {sidebar}
                     {navbar}
-                    <SettingsScreen></SettingsScreen>
+                    <SettingsScreen settings={this.state.user_settings}></SettingsScreen>
                 </div>
             )
         }
