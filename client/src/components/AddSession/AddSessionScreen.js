@@ -18,6 +18,10 @@ class AddSessionScreen extends Component {
         this.handleSessionSelect = this.handleSessionSelect.bind(this)
     }
 
+    componentDidMount() {
+        console.log("AddSessionScreen Props", this.props)
+    }
+
     
 
     handleDropDownClick() {
@@ -41,9 +45,9 @@ class AddSessionScreen extends Component {
     render() {
         let session
         if (this.state.indoorSession) {
-            session = <IndoorSession></IndoorSession>
+            session = <IndoorSession routeGrades={this.props.routeGrades} boulderGrades={this.props.boulderGrades}></IndoorSession>
         } else if (this.state.outdoorSession) {
-            session = <OutdoorSession></OutdoorSession>
+            session = <OutdoorSession routeGrades={this.props.routeGrades} boulderGrades={this.props.boulderGrades}></OutdoorSession>
         } else if (this.state.hangboardSession) {
             session = <HangboardSession></HangboardSession>
         } else {

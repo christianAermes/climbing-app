@@ -20,8 +20,10 @@ export const checkIfEmailExists = async(email) => {
         let query = `SELECT * FROM users WHERE email='${email}' LIMIT 1`
         Connection.query(query, (err, res)=>{
             if (err) {
+                console.log(err)
                 return reject(err)
             }
+            console.log(res)
             return resolve(res.length>0)
         })
     })

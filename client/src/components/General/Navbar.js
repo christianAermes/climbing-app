@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import DefaultProfileImg from '../images/profile100.png'
+import DefaultProfileImg from '../../images/profile100.png'
 
 class Navbar extends Component {
     render() {

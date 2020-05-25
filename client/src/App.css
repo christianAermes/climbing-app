@@ -161,7 +161,7 @@ input:focus {
   font-size: 20px;
   padding: 7px;
 }
-#delete-account-btn {
+#delete-account-btn, #confirm-delete-account-btn {
   background: #B53A3A;
   border: none;
   border-radius: 5px;
@@ -169,8 +169,85 @@ input:focus {
   font-size: 20px;
   padding: 7px;
 }
-#delete-account-btn:hover, #save-settings-changes-btn:hover, #save-add-sessions-btn:hover {
+#delete-account-btn:hover, #save-settings-changes-btn:hover, #save-add-sessions-btn:hover, #close-delete-account-popup-btn:hover, #confirm-delete-account-btn:hover {
   cursor: pointer;
+}
+
+.popup-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000dd;
+}
+.delete-account-message-container {
+  display: grid;
+  grid-template-rows: 30px auto;
+  justify-items: center;
+  margin: auto;
+  margin-top: 50px;
+  color: #fff;
+  font-size: 24px;
+  padding-bottom: 50px;
+  width: 80%;
+  max-width: 400px;
+}
+.saved-changes-message-container {
+  margin: auto;
+  margin-top: 20%;
+  color: #fff;
+  font-size: 24px;
+  width: 80%;
+  max-width: 400px;
+}
+#close-delete-account-popup-btn {
+  position: relative;
+  justify-self: end;
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  border: none;
+  background: none;
+}
+#close-delete-account-popup-btn:hover {
+  background: #999;
+}
+#close-delete-account-popup-btn:after, #close-delete-account-popup-btn:before {
+  position: absolute;
+  left: 10%;
+  margin-top: -2px;
+  display: inline-block;
+  content: "";
+  width: 80%;
+  height: 4px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+#close-delete-account-popup-btn:before {
+  transform: rotate(-45deg);
+}
+#close-delete-account-popup-btn:after {
+  transform: rotate(45deg);
+}
+#close-delete-account-popup-btn::after:hover, #close-delete-account-popup-btn::before:hover {
+  background-color: var(--darkblue);
+}
+.delete-account-message-container input {
+  height: 15px;
+  width: 50%;
+  max-width: 200px;
+  border-radius: 7px;
+  padding: 7px;
+  border: 1px solid #b4b4b4;
+  margin-bottom: 20px;
+}
+.delete-account-message-container p {
+  padding: 25px;
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 /*-------- Infoboxes on Overview Screen------------*/
@@ -364,6 +441,38 @@ input:focus {
 .login-form button:hover {
   cursor: pointer;
 }
+.register-btn-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  row-gap: 20px;
+  column-gap: 10px;
+  align-items: center;
+}
+#register-screen-back2login-btn {
+  position: relative;
+  height: 45px;
+  width:  45px;
+  border-radius: 50%;
+}
+#register-screen-back2login-btn:after, #register-screen-back2login-btn:before {
+  position: absolute;
+  left: 12px;
+  margin-top: -4px;
+  display: inline-block;
+  content: "";
+  width: 25px;
+  height: 8px;
+  border-radius: 8px;
+  background-color: #fff;
+}
+#register-screen-back2login-btn:before {
+  transform: rotate(40deg) translateY(8px);
+}
+#register-screen-back2login-btn:after {
+  transform: rotate(-40deg) translateY(-8px);
+}
+
+
 
 @keyframes blink {
   0%   {box-shadow:  0px 0px 7px 7px #B53A3A99;}

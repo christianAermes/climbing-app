@@ -2,12 +2,15 @@ import bcrypt from "bcrypt"
 import express from "express"
 import cors from "cors"
 
-import all from "./database/selectall"
-import userCredentials from "./database/selectUserLogin"
+import userCredentials from "./database/userLogin"
 import insertNewUser from "./database/insertNewUser"
 import getIndoorSessions from "./database/getIndoorSessions"
 import getOutdoorSessions from "./database/getOudoorSessions"
-import selectUserSettings from "./database/selectUserSettings"
+import selectUserSettings from "./database/getUserSettings"
+import getGrades from "./database/getGrades"
+import updateUserSettings from "./database/updateUserSettings"
+import deleteUser from "./database/deleteUser"
+
 
 import config from "./config"
 
@@ -22,33 +25,35 @@ app.listen(port, () => {
 
 
 app.post("/login", async (request, response) => {
+    console.log(request.body)
     try {
         let username = request.body.username
         let password = request.body.password
 
         let loginData = await userCredentials(username)
-        console.log(loginData[0])
-        let data = loginData[0]
-        let settings = {
-            boulderGrades: data.boulderGradeFB? "fb" : "v",
-            routeGrades: data.routesGradeUIAA? "UIAA" : data.routesGradeFrench? "french" : "YDS",
-            profileImg: data.profile_img
+        console.log("Login Data:", loginData[0])
+        if (loginData.length === 1) {
+            let data = loginData[0]
+            bcrypt.compare(password, data.password, (err, res)=>{
+                if (err) {
+                    console.log(err)
+                    return response.json({success: false, message: "User name or password incorrect."})
+                }
+                if (res) {
+                    console.log("Submitted Password is correct")
+                    // return response.json({success: true, message: "Submitted Password is correct.", settings: settings, id: data.idusers})
+                    return response.json({success: true, message: "Submitted Password is correct.", id: data.idusers})
+                } 
+                else {
+                    console.log("Passwords do not match")
+                    return response.json({success: false, message: "Passwords do not match."})
+                }
+            })
+        } else {
+            console.log("No user with that username found.")
+            return response.json({success: false, message: "No user with that username found."})
         }
-
-        bcrypt.compare(password, loginData[0].password, (err, res)=>{
-            if (err) {
-                console.log(err)
-                return response.json({success: false, message: "User name or password incorrect."})
-            }
-            if (res) {
-                console.log("Submitted Password is correct")
-                return response.json({success: true, message: "Submitted Password is correct.", settings: settings})
-            } 
-            else {
-                console.log("Passwords do not match")
-                return response.json({success: false, message: "Passwords do not match."})
-            }
-        })
+        
         
     } catch (e) {
         console.log("Another error occured.")
@@ -62,7 +67,7 @@ app.post("/register", async (request, response) => {
     try {
         let username = request.body.username
         let password = request.body.password
-        let email = request.body.emails
+        let email = request.body.email
 
         let res = await insertNewUser(username, password, email)
         console.log(res)
@@ -98,13 +103,44 @@ app.post("/getOutdoorSessions", async (request, response) => {
 })
 
 app.post("/getUserSettings", async (request, response) => {
-    console.log("get me")
     try {
         let username = request.body.username
         let res = await selectUserSettings(username)
 
         console.log(res)
         return response.json({success:true, data: res})
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+app.post("/getGrades", async (request, response) => {
+    try {
+        let grades = await getGrades()
+        return response.json({success: true, grades: grades});
+    } catch (e) {
+        console.log(e)
+        return response.json({success: false, grades: []});
+    }
+})
+
+app.post("/updateUserSettings", async (request, response) => {
+    try {
+        let settings = request.body.settings
+        let username = request.body.username
+        let res = await updateUserSettings(settings, username)
+        return response.json({success: true, settings: settings})
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+app.post("/deleteUser", async (request, response) => {
+    try {
+        let username = request.body.username
+        let res = await deleteUser(username)
+        console.log(res)
+        return response.json({success: true, data: res})
     } catch (e) {
         console.log(e)
     }
@@ -117,6 +153,7 @@ app.post("/getUserSettings", async (request, response) => {
 
 
 import {createDummyDataIndoor, createDummyDataOutdoor} from "./createDummyData"
+
 app.get("/insert", async (request, response) => {
     try {
         // createDummyDataIndoor()

@@ -11,7 +11,7 @@ class LoginScreen extends Component {
                     <input type="text" placeholder="Username" id="login-username-input" autoComplete="off"></input>
                     <input type="password" placeholder="Password" id="login-password-input"></input>
                     <button onClick={this.props.handleLogin}>Login</button>
-                    <button onClick={this.props.handleRegister}>Register</button>
+                    <button onClick={this.props.handleGoToRegister}>Register</button>
                 </form>
             </div>
         )

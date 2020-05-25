@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import GradeSelector from './GradeSelector'
-import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker"
 
-import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker.css"
 
-class OutdoorSession extends Component {
+class IndoorSession extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -19,19 +19,25 @@ class OutdoorSession extends Component {
         this.setState({startDate: date})
     }
 
+    componentWillReceiveProps() {
+        console.log("IndoorSession Updated", this.props)
+    }
+
+
     render() {
-        let boulderGrades = this.state.boulderGrades==="fb"?
-                ["1", "2", "3", "4", "5", "6A", "6A+", "6B", "6B+", "6C", "6C+", "7A", "7A+", "7b", "7B+", "7C", "7C+", "8A", "8A+", "8B", "8B+", "8C", "8C+", "9A"] :
-                ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"]
-        
+        // let boulderGrades = this.state.boulderGrades==="fb"?
+        //         ["1", "2", "3", "4", "5", "6A", "6A+", "6B", "6B+", "6C", "6C+", "7A", "7A+", "7b", "7B+", "7C", "7C+", "8A", "8A+", "8B", "8B+", "8C", "8C+", "9A"] :
+        //         ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"]
+        let boulderGrades = this.props.boulderGrades
         let boulderGradesComponents = boulderGrades.map(bg=><GradeSelector grade={bg} key={bg}></GradeSelector>)
         
-        let routeGrades = ["3-", "3", "3+", "4-", "4", "4+", "5-", "5", "5+", "6-", "6", "6+", "7-", "7", "7+", "8-", "8", "8+", "9-", "9", "9+", "10-", "10", "10+", "11-", "11", "11+"]
+        // let routeGrades = ["3-", "3", "3+", "4-", "4", "4+", "5-", "5", "5+", "6-", "6", "6+", "7-", "7", "7+", "8-", "8", "8+", "9-", "9", "9+", "10-", "10", "10+", "11-", "11", "11+"]
+        let routeGrades = this.props.routeGrades
         let routeGradesComponents = routeGrades.map(rg=><GradeSelector grade={rg} key={rg}></GradeSelector>)
         
         return (
             <div className="session">
-                    <input type="text" placeholder="Crag"/>
+                    <input type="text" placeholder="Gym"/>
                     <DatePicker  dateFormat="dd.MM.yyyy"  onChange={this.handleDateSelect} selected={this.state.startDate}></DatePicker>
 
                 <div className="table-head">
@@ -54,4 +60,4 @@ class OutdoorSession extends Component {
     }
 }
 
-export default OutdoorSession
+export default IndoorSession

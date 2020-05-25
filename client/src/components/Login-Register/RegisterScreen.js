@@ -11,7 +11,10 @@ class RegisterScreen extends Component {
                     <input type="password" placeholder="Confirm Password" id="register-password-confirm" ></input>
                     <input type="number" placeholder="Age" autoComplete="off" id="register-age" ></input>
                     <input type="email" placeholder="Email" autoComplete="off" id="register-email" ></input>
-                    <button onClick={this.props.handleRegisterSuccess}>Register</button>
+                    <div className="register-btn-container">
+                        <button onClick={this.props.handleGoBackToLogin} id="register-screen-back2login-btn"></button>
+                        <button onClick={this.props.handleRegisterSuccess}>Register</button>
+                    </div>
                 </form>
             </div>
         )
