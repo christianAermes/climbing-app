@@ -5,7 +5,7 @@ class GradeSelector extends Component {
         return(
             <div className="grade-selector">
                 <p>{this.props.grade}</p>
-                <input type="number" min={0}/>
+                <input type="number" min={0} onChange={this.props.handleChange} id={this.props.id}/>
             </div>
         )
     }

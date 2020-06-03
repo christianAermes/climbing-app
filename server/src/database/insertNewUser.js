@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt"
+import cryptoRandomString from "crypto-random-string"
 import {Connection} from "./Connection"
 
 export const checkIfUsernameExists = async(username) => {
@@ -35,10 +36,14 @@ export const hashPassword = async (password) => {
             if (err) reject(err)
             return resolve(hash)
         })
-    })
-    
+    })   
 }
 
+export const generateVerificationToken = () => {
+    const token = cryptoRandomString({length: 10, type: 'url-safe'})
+    return token
+
+}
 
 const insertNewUser = async(username, password, email) => {
     let hash = await hashPassword(password)

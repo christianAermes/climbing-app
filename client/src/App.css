@@ -4,6 +4,9 @@
   --darkblue: #252E3A;
   --darkgray: #333;
   --main-bg: #F2F2F2;
+  --input-padding: 7px;
+  --input-height: 15px;
+  --input-color: #b4b4b4;
 }
 
 
@@ -11,10 +14,38 @@
   text-align: center;
   background: var(--main-bg);
 }
+input {
+  height: var(--input-height);
+  border: 1px solid var(--input-color);
+  border-radius: 7px;
+  padding: var(--input-padding);
+}
 input:focus {
   outline: none;
 }
-
+.react-datepicker-wrapper, .react-datepicker__input-container {
+  display: block;
+}
+.recharts-brush-texts { 
+  font-size: 0;
+}
+.recharts-brush rect {
+  fill: #fff;
+  stroke: none;
+  border-radius: 5px;
+}
+.recharts-brush-slide {
+  fill: #555 !important;
+  fill-opacity: 1;
+  stroke: #555 !important;
+}
+.recharts-brush-traveller rect {
+  fill: #000 !important;
+  stroke: #000;
+}
+.recharts-brush-traveller line {
+  stroke: #248499
+}
 
 /*-------- Navbar ---------------*/
 .navbar {
@@ -129,12 +160,7 @@ input:focus {
   margin-bottom: 10px;
   border-radius: 5px;
 }
-.settings-block input {
-  height: 15px;
-  border-radius: 7px;
-  padding: 7px;
-  border: 1px solid #b4b4b4;
-}
+
 .grade-settings {
   color: #fff;
   font-size: 20px;
@@ -169,7 +195,7 @@ input:focus {
   font-size: 20px;
   padding: 7px;
 }
-#delete-account-btn:hover, #save-settings-changes-btn:hover, #save-add-sessions-btn:hover, #close-delete-account-popup-btn:hover, #confirm-delete-account-btn:hover {
+button:hover {
   cursor: pointer;
 }
 
@@ -193,7 +219,7 @@ input:focus {
   width: 80%;
   max-width: 400px;
 }
-.saved-changes-message-container {
+.popup-message-container {
   margin: auto;
   margin-top: 20%;
   color: #fff;
@@ -201,7 +227,7 @@ input:focus {
   width: 80%;
   max-width: 400px;
 }
-#close-delete-account-popup-btn {
+.close-btn {
   position: relative;
   justify-self: end;
   height: 30px;
@@ -212,10 +238,10 @@ input:focus {
   border: none;
   background: none;
 }
-#close-delete-account-popup-btn:hover {
+.close-btn:hover {
   background: #999;
 }
-#close-delete-account-popup-btn:after, #close-delete-account-popup-btn:before {
+.close-btn:after, .close-btn:before {
   position: absolute;
   left: 10%;
   margin-top: -2px;
@@ -226,22 +252,21 @@ input:focus {
   border-radius: 4px;
   background-color: #fff;
 }
-#close-delete-account-popup-btn:before {
+.close-btn:before {
   transform: rotate(-45deg);
 }
-#close-delete-account-popup-btn:after {
+.close-btn:after {
   transform: rotate(45deg);
 }
-#close-delete-account-popup-btn::after:hover, #close-delete-account-popup-btn::before:hover {
+.close-btn::after:hover, .close-btn::before:hover {
   background-color: var(--darkblue);
 }
+.btn-center {
+  justify-self: center;
+}
 .delete-account-message-container input {
-  height: 15px;
   width: 50%;
   max-width: 200px;
-  border-radius: 7px;
-  padding: 7px;
-  border: 1px solid #b4b4b4;
   margin-bottom: 20px;
 }
 .delete-account-message-container p {
@@ -259,7 +284,7 @@ input:focus {
 .infobox {
   color: #fff;
   width: 100%;
-  padding: 10px;
+  padding: 0px;
   box-sizing: border-box;
   text-align: center;
 }
@@ -274,10 +299,27 @@ input:focus {
   padding: 10px 0;
 }
 
+.summary-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  row-gap: 20px;
+  column-gap: 20px;
+}
+.summary {
+  border: 2px solid #A2A2A2;
+  border-radius: 7px;
+  padding: 10px 15px 20px 15px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
 
 /*-------- Graph Component---------------*/
+.graph-title {
+  font-size: 18px;
+  margin-bottom: -10px;
+  padding: 0 5px 0 5px;
+}
 .graph-container {
-  margin-top: 20px;
+  margin-top: 10px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   grid-gap: 20px;
@@ -288,16 +330,18 @@ input:focus {
   align-items: center;
   width: 100%;
   height: auto;
-  min-height: 200px;
+  min-height: 250px;
   background: #FFFFFF;
   border: 1px solid #A2A2A2;
   border-radius: 5px;
+  margin-top: 10px;
 }
 .graph {
   width: calc(85% - 17px);
   height: calc(85% - 28px);
   background: var(--darkblue);
   padding: 20px;
+  
 }
 
 
@@ -341,14 +385,12 @@ input:focus {
   display: block;
 }
 
-/*---- Add Indoor Sessions -----*/
-.session input {
-  height: 15px;
-  border-radius: 7px;
-  padding: 7px;
-  border: 1px solid #b4b4b4;
-  margin: 10px;
+/*---- Add Sessions -----*/
+.session {
+  margin-top: 20px;
 }
+
+/*---------- Indoor ------------*/
 .table-head {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -366,37 +408,182 @@ input:focus {
   border-radius: 0 0 5px 5px;
   margin-bottom: 30px;
 }
+.grade-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(25px, 100px));
+  row-gap: 10px;
+  column-gap: 10px;
+}
+.grade-selector input {
+  margin-top: 10px;
+  margin-right: 15px;
+}
+.indoor-session-details {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  row-gap: 10px;
+  column-gap: 10px;
+}
+/*------ Hangboard ---------------*/
 .hangboard-input-container {
+  display: grid;
+  justify-items: center;
   margin-bottom: 20px;
   margin-top: 10px;
 }
 .hangboard-input-container input {
-  display: block;
-  margin: auto;
   margin-bottom: 10px;
 }
 .hangboard-strength-test {
   width: 80%;
   max-width: 500px;
   margin: auto;
+  justify-items: center;
   background: #629DA5;
-  color: #fff;
-  font-size: 20px;
   border-radius: 7px;
   margin-bottom: 20px;
   padding-bottom: 10px;
 }
 .hangboard-strength-test p {
-  padding-top: 5px;
+  color: #fff;
+  font-size: 20px;
+  padding: 5px;
   margin-bottom: 5px;
+
 }
-.grade-selector {
+.hangboard-strength-test input {
+  margin: 10px;
+}
+
+/*----------- Outdoor Session ------------------*/
+.outdoor-session-btn-container {
+  margin-top: 15px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(25px, 100px));
+  grid-template-columns: auto;
+  justify-items: center;
+  row-gap: 20px;
 }
-.grade-selector input {
-  max-width: 80%;
+.add-ascent-to-list-btn {
+  margin-top: 12px;
+  position: relative;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: none;
 }
+.add-ascent-to-list-btn:hover {
+  background: #999;
+}
+.add-ascent-to-list-btn:after, .add-ascent-to-list-btn:before {
+  position: absolute;
+  left: 0px;
+  margin-top: -3px;
+  display: inline-block;
+  content: "";
+  width: 100%;
+  height: 6px;
+  background-color: #fff;
+}
+.add-ascent-to-list-btn:before {
+  transform: rotate(90deg);
+}
+.add-ascent-to-list-btn:after {
+  transform: rotate(180deg);
+}
+.add-ascent-to-list-btn::after:hover, .add-ascent-to-list-btn::before:hover {
+  background-color: var(--darkblue);
+}
+
+/*--------- Ascent List --------------------------*/
+.outdoor-session-climbing-type {
+  background: #248499;
+  color: #fff;
+  border-radius: 5px 5px 0 0;
+  font-size: 20px;
+  padding: 7px;
+}
+.ascent-list-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.ascent-list .ascent-container:nth-child(even) {
+  background: #ccc;
+}
+.ascent-list .ascent-container:last-child {
+  border-radius: 0 0 7px 7px;
+  margin-bottom: 0px;
+  border: none
+}
+
+/*--------- Add Ascent --------------------------*/
+.ascent-container {
+  padding: 12px 5px;
+  background: #aaa;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /**/
+  column-gap: 10px;
+  row-gap: 5px;
+  align-items: center;
+  border-bottom: 2px solid #fff;
+}
+.method-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  padding: 7px;
+  border-radius: 7px;
+  border: 1px solid var(--input-color);
+  height: 28px;
+  background: #fff;
+}
+
+.grade-dropdown button {
+  background: #fff;
+  width: 100%;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--input-color);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+}
+
+.testdiv {
+  padding: 0;
+}
+.testdiv input {
+  margin: 0;
+  margin-left: calc(-1 * var(--input-padding));
+  margin-right: calc(-1 * var(--input-padding));
+  width: calc(100% - 2 * var(--input-padding));
+}
+.dropdown-grades {
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 100px;
+  max-height: 300px;
+  overflow-y: scroll;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-grades div:nth-child(even) {
+  background:var(--input-color);
+}
+.dropdown-grade-item {
+  padding: 3px 0;
+  max-width: 100%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 1fr 1fr;
+}
+
 
 
 /*-------- Login and Registration---------------*/

@@ -10,16 +10,20 @@ class AddSessionScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            indoorSession: false,
-            outdoorSession: false,
+            indoorSession:    !false,
+            outdoorSession:   false,
             hangboardSession: false
         }
         this.handleDropDownClick = this.handleDropDownClick.bind(this)
         this.handleSessionSelect = this.handleSessionSelect.bind(this)
     }
 
-    componentDidMount() {
-        console.log("AddSessionScreen Props", this.props)
+    // componentDidMount() {
+    //     console.log("AddSessionScreen Props", this.props)
+    // }
+
+    componentDidUpdate() {
+        // console.log(this.props.routeGrades)
     }
 
     
@@ -45,11 +49,11 @@ class AddSessionScreen extends Component {
     render() {
         let session
         if (this.state.indoorSession) {
-            session = <IndoorSession routeGrades={this.props.routeGrades} boulderGrades={this.props.boulderGrades}></IndoorSession>
+            session = <IndoorSession boulderBrackets={this.props.boulderBrackets} routeBrackets={this.props.routeBrackets} user_name={this.props.user_name} user_id={this.props.user_id}></IndoorSession>
         } else if (this.state.outdoorSession) {
             session = <OutdoorSession routeGrades={this.props.routeGrades} boulderGrades={this.props.boulderGrades}></OutdoorSession>
         } else if (this.state.hangboardSession) {
-            session = <HangboardSession></HangboardSession>
+            session = <HangboardSession user_name={this.props.user_name} user_id={this.props.user_id}></HangboardSession>
         } else {
             session = <div></div>
         }

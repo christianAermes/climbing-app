@@ -1,62 +1,56 @@
 import React, {Component} from 'react'
-import GradeSelector from './GradeSelector'
-import DatePicker from "react-datepicker";
-
-
-import "react-datepicker/dist/react-datepicker.css";
+import AscentList from "./AscentList"
 
 class OutdoorSession extends Component {
     constructor(props) {
         super(props)
         this.state = {
-                startDate: new Date(),
-                boulderGrades: "fb",
-                routeGrades: "UIAA"
-                }
-        this.handleDateSelect = this.handleDateSelect.bind(this)
+            // startDate: new Date(),
+            n_ascents: 1,
+            // ascents: [{
+            //     name:  null,
+            //     crag:  null,
+            //     grade: null,
+            //     startDate:  new Date(),
+            //     flash: false,
+            //     top:   false,
+            //     id: 0,
+            // }]
+        }
+        this.handleSaveSession  = this.handleSaveSession.bind(this)
     }
     
-    handleDateSelect(date) {
-        this.setState({startDate: date})
+    handleSaveSession() {
+        for (let ascent of this.state.ascents) {
+            console.log(ascent)
+        }
     }
-
     
-
+    componentDidUpdate() {
+        this.render()
+    }
     componentDidMount() {
         console.log(this.props)
     }
 
+
     render() {
-        // let boulderGrades = this.state.boulderGrades==="fb"?
-        //         ["1", "2", "3", "4", "5", "6A", "6A+", "6B", "6B+", "6C", "6C+", "7A", "7A+", "7b", "7B+", "7C", "7C+", "8A", "8A+", "8B", "8B+", "8C", "8C+", "9A"] :
-        //         ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"]
-        let boulderGrades = this.props.boulderGrades
-        let boulderGradesComponents = boulderGrades.map(bg=><GradeSelector grade={bg} key={bg}></GradeSelector>)
-        
-        // let routeGrades = ["3-", "3", "3+", "4-", "4", "4+", "5-", "5", "5+", "6-", "6", "6+", "7-", "7", "7+", "8-", "8", "8+", "9-", "9", "9+", "10-", "10", "10+", "11-", "11", "11+"]
-        let routeGrades = this.props.routeGrades
-        let routeGradesComponents = routeGrades.map(rg=><GradeSelector grade={rg} key={rg}></GradeSelector>)
-        
+        // let boulderAscents = this.state.ascents.map(ascent => <Ascent ascent={ascent} climbtype={1} handleAscentChange={this.handleAscentChange} grades={this.props.boulderGrades} key={ascent.id}></Ascent>)
+        // let routeAscents = this.state.ascents.map(ascent => <Ascent ascent={ascent} climbtype={0} handleAscentChange={this.handleAscentChange} grades={this.props.routeGrades} key={ascent.id}></Ascent>)
         return (
             <div className="session">
-                    <input type="text" placeholder="Crag"/>
-                    <DatePicker  dateFormat="dd.MM.yyyy"  onChange={this.handleDateSelect} selected={this.state.startDate}></DatePicker>
-
-                <div className="table-head">
-                    <p>Boulder</p><p>Routes</p>
-                </div>
-                <div className="table-body">
-                    <div>
-                        {boulderGradesComponents}
-                    </div>
-
-                    <div>
-                        {routeGradesComponents}
-                    </div>
-                    
-                </div>
-
-                <button id="save-add-sessions-btn">Save Session</button>
+                {/* <div className="outdoor-session-climbing-type">Boulder</div> */}
+                {/* {boulderAscents} */}
+                {/* <button className="add-ascent-to-list-btn" onClick={this.handleAddAscent}></button> */}
+                <AscentList climbtype={1} handleAscentChange={this.handleAscentChange} grades={this.props.boulderGrades}></AscentList>
+                {/* <AscentList climbtype={0} handleAscentChange={this.handleAscentChange} grades={this.props.routeGrades}></AscentList> */}
+                {/* <div className="outdoor-session-climbing-type">Routes</div> */}
+                {/* {routeAscents} */}
+                {/* <div className="outdoor-session-btn-container"> */}
+                    {/* <button className="add-ascent-to-list-btn" onClick={this.handleAddAscent}></button> */}
+                    <button id="save-add-sessions-btn" onClick={this.handleSaveSession}>Save Session</button>
+                {/* </div> */}
+                
             </div>
         )
     }

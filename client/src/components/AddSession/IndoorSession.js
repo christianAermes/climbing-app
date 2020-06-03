@@ -2,6 +2,9 @@ import React, {Component} from 'react'
 import GradeSelector from './GradeSelector'
 import DatePicker from "react-datepicker"
 
+import {postData} from "../../serverRequests"
+import config from "../../config"
+
 import "react-datepicker/dist/react-datepicker.css"
 
 class IndoorSession extends Component {
@@ -9,37 +12,65 @@ class IndoorSession extends Component {
         super(props)
         this.state = {
                 startDate: new Date(),
-                boulderGrades: "fb",
-                routeGrades: "UIAA"
+                climbs: {},
+                boulderBrackets: []
                 }
-        this.handleDateSelect = this.handleDateSelect.bind(this)
+        this.handleDateSelect    = this.handleDateSelect.bind(this)
+        this.handleSubmitSession = this.handleSubmitSession.bind(this)
+        this.handleChange        = this.handleChange.bind(this)
+        this.handleGymNameChange = this.handleGymNameChange.bind(this)
     }
     
     handleDateSelect(date) {
         this.setState({startDate: date})
     }
 
-    componentWillReceiveProps() {
-        console.log("IndoorSession Updated", this.props)
+    async handleSubmitSession() {
+        let {startDate, climbs, gym} = this.state
+        let user_name = this.props.user_name
+        let user_id = this.props.user_id
+        let date = startDate
+        let session = {date, ...climbs, user_name, user_id, gym}
+        // console.log(session)
+
+        let res = await postData(`${config.SERVER_ADDRESS}/insertNewIndoorSession`, {session: session})
+        console.log(res)
+        
+    }
+
+    handleGymNameChange(e) {
+        let gym = e.target.value
+        this.setState({gym: gym})
+
+    }
+
+    handleChange(e) {
+        let id = e.target.id
+        let value = e.target.value
+        this.setState((oldState) => {oldState.climbs[id] = value})
+        // console.log(this.state.climbs)
+        
+    }
+
+    componentDidUpdate() {
+        // console.log(this.props.boulderBrackets)
     }
 
 
     render() {
-        // let boulderGrades = this.state.boulderGrades==="fb"?
-        //         ["1", "2", "3", "4", "5", "6A", "6A+", "6B", "6B+", "6C", "6C+", "7A", "7A+", "7b", "7B+", "7C", "7C+", "8A", "8A+", "8B", "8B+", "8C", "8C+", "9A"] :
-        //         ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"]
-        let boulderGrades = this.props.boulderGrades
-        let boulderGradesComponents = boulderGrades.map(bg=><GradeSelector grade={bg} key={bg}></GradeSelector>)
+        let boulderGrades = this.props.boulderBrackets
+        let boulderGradesComponents = boulderGrades.map(bg=><GradeSelector grade={bg.grade} key={bg.id} id={`boulder_bracket_${bg.id}`} handleChange={this.handleChange}></GradeSelector>)
         
-        // let routeGrades = ["3-", "3", "3+", "4-", "4", "4+", "5-", "5", "5+", "6-", "6", "6+", "7-", "7", "7+", "8-", "8", "8+", "9-", "9", "9+", "10-", "10", "10+", "11-", "11", "11+"]
-        let routeGrades = this.props.routeGrades
-        let routeGradesComponents = routeGrades.map(rg=><GradeSelector grade={rg} key={rg}></GradeSelector>)
+        let routeGrades = this.props.routeBrackets
+        let routeGradesComponents = routeGrades.map(rg=><GradeSelector grade={rg.grade} key={rg.id} id={`route_bracket_${rg.id}`} handleChange={this.handleChange}></GradeSelector>)
         
         return (
             <div className="session">
-                    <input type="text" placeholder="Gym"/>
+                <div className="indoor-session-details">
+                    <input type="text" placeholder="Gym" onChange={this.handleGymNameChange}/>
                     <DatePicker  dateFormat="dd.MM.yyyy"  onChange={this.handleDateSelect} selected={this.state.startDate}></DatePicker>
-
+                </div>
+                
                 <div className="table-head">
                     <p>Boulder</p><p>Routes</p>
                 </div>
@@ -54,7 +85,7 @@ class IndoorSession extends Component {
                     
                 </div>
 
-                <button id="save-add-sessions-btn">Save Session</button>
+                <button onClick={this.handleSubmitSession} id="save-add-sessions-btn">Save Session</button>
             </div>
         )
     }

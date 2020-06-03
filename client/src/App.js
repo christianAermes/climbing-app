@@ -7,6 +7,7 @@ import OverviewScreen from './components/OverviewScreen/OverviewScreen'
 import AddSessionScreen from './components/AddSession/AddSessionScreen'
 import SettingsScreen from './components/Settings/SettingsScreen'
 
+import config from "./config"
 import {postData} from "./serverRequests"
 
 
@@ -16,19 +17,21 @@ const SIDEBAR_HIGHLIGHT_COLOR = "#248499"
 const INITIAL_STATE = {
     login:      false,
     register:   false,
-    overview:   false,
+    overview:   !false,
     addSession: false,
-    settings:   !false,
+    settings:   false,
 
     username: "ich",
     user_id: 8,
     user_settings: {
-        boulderGrades: "",
-        routeGrades: "",
+        boulderGrades: "v",
+        routeGrades: "french",
         profile_img: null,
     }, 
     boulderGrades: [],
     routeGrades: [],
+    boulderBrackets: [],
+    routeBrackets: [],
 }
 
 
@@ -53,7 +56,7 @@ class App extends Component {
         let username = document.getElementById("login-username-input")
         let password = document.getElementById("login-password-input")
         let loginData = {username: username.value, password: password.value}
-        let data = await postData("http://localhost:8000/login", loginData)
+        let data = await postData(`${config.SERVER_ADDRESS}/login`, loginData)
         console.log("Login Data:", data)
         
         if (data.success) {
@@ -87,22 +90,29 @@ class App extends Component {
     }
     async handleRegisterSuccess(e) {
         e.preventDefault()
-        let username = document.getElementById("register-username")
-        let password = document.getElementById("register-password")
+        let username        = document.getElementById("register-username")
+        let password        = document.getElementById("register-password")
         let passwordConfirm = document.getElementById("register-password-confirm")
-        let age = document.getElementById("register-age")
-        let email = document.getElementById("register-email")
+        let age             = document.getElementById("register-age")
+        let email           = document.getElementById("register-email")
         
         if (username.value !== "" && password.value !== "" && age.value !== "" && email.value !== "") {
+            // check if password fulfills requirements
+            if (!this.checkIfPasswordValidFormat(password.value)) {
+                console.log("Passwords must contain at least one number, one lower case letter, one upper case letter, one special character. Passwords must be at least 8 characters long.")
+                return
+            }
             // check if passwords match
-            if (password.value === passwordConfirm.value) {
-                let registerData = {username: username.value, password: password.value, email: email.value}
-                console.log(registerData)
-                let data = await postData("http://localhost:8000/register", registerData)
-                console.log(data)
-                if (data.success) {
-                    this.setState({login:true, register: false})
-                }
+            if (password.value !== passwordConfirm.value) {
+                console.log("Passwords do not match.")
+                return
+            }
+            let registerData = {username: username.value, password: password.value, email: email.value}
+            console.log(registerData)
+            let data = await postData(`${config.SERVER_ADDRESS}/register`, registerData)
+            console.log(data)
+            if (data.success) {
+                this.setState({login:true, register: false})
             }
         }
     }
@@ -110,10 +120,9 @@ class App extends Component {
         document.querySelectorAll(".sidebar button").forEach(btn=>btn.style.background="none")
         this.setState(INITIAL_STATE)
     }
-
-    // functions for sidebar buttons to enable navigation
-    // functions change state of the app to go to the specific page
     handleChangePageView(e) {
+        // function for sidebar buttons to enable navigation
+        // change state of the app to go to the specific page
         document.querySelectorAll(".sidebar button").forEach(btn=>btn.style.background="none")
         e.target.style.background = SIDEBAR_HIGHLIGHT_COLOR
         let newState = {
@@ -130,28 +139,22 @@ class App extends Component {
     }
 
     async getGrades() {
-        let res = await postData("http://localhost:8000/getGrades")
         
         let boulderSelector = this.state.user_settings.boulderGrades === "fb"? "fra_boulders" : "usa_boulders"
-        let boulderGrades = res.grades.filter(
-                el => 
-                    !el[boulderSelector].match("/") && el[boulderSelector] !== "" && el["id"] > 16 && el["id"] < 75)
-                    .map(el => el[boulderSelector])
-        
+        let boulders = await postData(`${config.SERVER_ADDRESS}/getGrades`, {selector: boulderSelector})
+
         let routeSelector = this.state.user_settings.routeGrades === "french"? "fra_routes" : "usa_routes"
-        let routeGrades = res.grades.filter(
-                el => !el[routeSelector].match("/") && el[routeSelector] !== "" && el["id"] > 16 && el["id"] < 84)
-                .map(el => el[routeSelector])
+        let routes = await postData(`${config.SERVER_ADDRESS}/getGrades`, {selector: routeSelector})
         
-        boulderGrades = Array.from(new Set(boulderGrades))
-        routeGrades = Array.from(new Set(routeGrades))
         this.setState({
-            boulderGrades: boulderGrades,
-            routeGrades: routeGrades
+            boulderGrades: boulders.grades,
+            routeGrades: routes.grades,
+            boulderBrackets: boulders.brackets,
+            routeBrackets: routes.brackets
         })
     }
     async getUserSettings(username) {
-        let res = await postData("http://localhost:8000/getUserSettings", {username: username})
+        let res = await postData(`${config.SERVER_ADDRESS}/getUserSettings`, {username: username})
         let settings = res.data[0]
         console.log(settings)
         this.setState({
@@ -171,7 +174,6 @@ class App extends Component {
         this.getGrades()
         console.log("User settings in App:", this.state.user_settings)
     }
-
     checkIfPasswordValidFormat(password) {
         // regex adapted from https://stackoverflow.com/questions/14850553/javascript-regex-for-password-containing-at-least-8-characters-1-number-1-uppe
         if (typeof(password) !== "string") return false
@@ -181,9 +183,10 @@ class App extends Component {
         return match !== null
     }
 
-    componentDidMount() {
-        let testPW = "Rammstein123"
-        console.log(this.checkIfPasswordValidFormat(testPW))
+
+
+    async componentDidMount() {
+        this.getGrades()
     }
     
     
@@ -193,9 +196,9 @@ class App extends Component {
         let containerContent = <div></div>
         
         if (this.state.overview) {
-            containerContent = <OverviewScreen boulderGrades={this.state.user_settings.boulderGrades} username={this.state.username}></OverviewScreen>
+            containerContent = <OverviewScreen boulderBrackets={this.state.boulderBrackets} routeBrackets={this.state.routeBrackets} boulderGrades={this.state.user_settings.boulderGrades} routeGrades={this.state.user_settings.routeGrades} username={this.state.username}></OverviewScreen>
         } else if (this.state.addSession) {
-            containerContent = <AddSessionScreen routeGrades={this.state.routeGrades} boulderGrades={this.state.boulderGrades}></AddSessionScreen>
+            containerContent = <AddSessionScreen routeGrades={this.state.routeGrades} boulderGrades={this.state.boulderGrades} user_name={this.state.username} user_id={this.state.user_id} boulderBrackets={this.state.boulderBrackets} routeBrackets={this.state.routeBrackets}></AddSessionScreen>
         } else if (this.state.settings) {
             containerContent = <SettingsScreen checkIfPasswordValidFormat={this.checkIfPasswordValidFormat} settings={this.state.user_settings} username={this.state.username} updateUserSettingsAPP={this.updateUserSettingsAPP} handleDeleteAccountSuccess={this.handleDeleteAccountSuccess}></SettingsScreen>
         }

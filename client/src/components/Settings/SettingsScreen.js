@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
+import MessagePopUp from "../General/MessagePopUp"
 import DefaultProfileImg from '../../images/profile200.png'
 
 import {postData} from "../../serverRequests"
+import config from "../../config"
 
 class DeleteAccountPopUp extends Component {
     componentDidMount() {
@@ -12,7 +14,7 @@ class DeleteAccountPopUp extends Component {
         return (
             <div className="popup-background">
                 <div className="delete-account-message-container sub-container">
-                    <button id="close-delete-account-popup-btn" onClick={this.props.closePopUpWindow}></button>
+                    <button className="close-btn" onClick={this.props.closePopUpWindow}></button>
                     <p>
                         Are you sure you want to delete your account? This action cannot be undone.
                         If you still want to proceed, please enter your password and click the "Confirm"
@@ -20,24 +22,6 @@ class DeleteAccountPopUp extends Component {
                     </p>
                     <input type="password" id="delete-account-password-input"></input>
                     <button id="confirm-delete-account-btn" onClick={this.props.confirmDeleteAccount}>Confirm</button>
-                </div>
-            </div>
-        )
-    }
-}
-
-class SaveSettingsConfirmationPopup extends Component {
-    componentDidMount() {
-        window.scrollTo(0,0)
-    }
-
-    render() {
-        return (
-            <div className="popup-background">
-                <div className="saved-changes-message-container sub-container">
-                    <p>
-                        Saved Changes.
-                    </p>
                 </div>
             </div>
         )
@@ -71,7 +55,7 @@ class SettingsScreen extends Component {
     }
 
     getUserSettings() {
-        postData("http://localhost:8000/getUserSettings", {username: this.props.username}).then((res)=>{
+        postData(`${config.SERVER_ADDRESS}/getUserSettings`, {username: this.props.username}).then((res)=>{
             let settings = res.data[0]
             console.log("PREVIOUS SETTINGS FROM DB", settings)
             this.setState({
@@ -122,7 +106,7 @@ class SettingsScreen extends Component {
             routesGradeYDS: this.state.usa_routes,
         }
 
-        let res = await postData("http://localhost:8000/updateUserSettings", {settings: gradeSettings, username: this.state.username})
+        let res = await postData(`${config.SERVER_ADDRESS}/updateUserSettings`, {settings: gradeSettings, username: this.state.username})
         this.props.updateUserSettingsAPP(res.settings)
         
     }
@@ -145,10 +129,10 @@ class SettingsScreen extends Component {
         let username = this.state.username
         let password = document.getElementById("delete-account-password-input")
         let loginData = {username: username, password: password.value}
-        let data = await postData("http://localhost:8000/login", loginData)
+        let data = await postData(`${config.SERVER_ADDRESS}/login`, loginData)
         console.log("Login Data:", data)
         if (data.success) {
-            let res = await postData("http://localhost:8000/deleteUser", {username: username})
+            let res = await postData(`${config.SERVER_ADDRESS}/deleteUser`, {username: username})
             console.log(res.success)
             this.props.handleDeleteAccountSuccess()
         } else {
@@ -179,7 +163,7 @@ class SettingsScreen extends Component {
 
 
     render() {
-        let popupWindowCONFIRM_CHANGES = this.state.showPopUpWindowCONFIRM_CHANGES? <SaveSettingsConfirmationPopup closePopUpWindow={this.closePopUpWindow}></SaveSettingsConfirmationPopup> : <div></div>
+        let popupWindowCONFIRM_CHANGES = this.state.showPopUpWindowCONFIRM_CHANGES? <MessagePopUp message="Saved Changes."></MessagePopUp> : <div></div>
         let popupWindowDELETE = this.state.showPopUpWindowDELETE? <DeleteAccountPopUp closePopUpWindow={this.closePopUpWindow} confirmDeleteAccount={this.confirmDeleteAccount}></DeleteAccountPopUp> : <div></div>
         return (
             <div className="main-container">

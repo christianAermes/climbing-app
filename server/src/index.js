@@ -6,10 +6,14 @@ import userCredentials from "./database/userLogin"
 import insertNewUser from "./database/insertNewUser"
 import getIndoorSessions from "./database/getIndoorSessions"
 import getOutdoorSessions from "./database/getOudoorSessions"
+import getHangboardSessions from "./database/getHangboardSessions"
+import insertNewHangboardSession from "./database/insertNewHangbordSession"
+import insertNewIndoorSession from "./database/insertNewIndoorSession"
 import selectUserSettings from "./database/getUserSettings"
 import getGrades from "./database/getGrades"
 import updateUserSettings from "./database/updateUserSettings"
 import deleteUser from "./database/deleteUser"
+
 
 
 import config from "./config"
@@ -19,10 +23,16 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
 })
 
+process.on("uncaughtException", (e) => {
+    console.log("Uncaught Exception", e)
+    // process.exit(0)
+    // console.log("Exit?")
+    // server.close()
+})
 
 app.post("/login", async (request, response) => {
     console.log(request.body)
@@ -102,6 +112,18 @@ app.post("/getOutdoorSessions", async (request, response) => {
     }
 })
 
+app.post("/getHangboardSessions", async (request, response) => {
+    try {
+        let username = request.body.username
+        let res = await getHangboardSessions(username)
+        // console.log(res)
+        return response.json({success: true, data: res})
+    } catch (e) {
+        console.log(e)
+        return response.json({success: false, data: []})
+    }
+})
+
 app.post("/getUserSettings", async (request, response) => {
     try {
         let username = request.body.username
@@ -116,11 +138,24 @@ app.post("/getUserSettings", async (request, response) => {
 
 app.post("/getGrades", async (request, response) => {
     try {
-        let grades = await getGrades()
-        return response.json({success: true, grades: grades});
+        let selector = request.body.selector
+        let grades = await getGrades(selector)
+        let idBrackets = selector.match("boulders")? [[1,15], [16, 21], [22, 33], [34, 45], [46,57]] : selector.match("routes")? [[1,15], [16, 21], [22, 33], [34, 45], [46,57], [58,65]] : []
+
+        let gradeBrackets = idBrackets.map(el => [])
+        for (let i=0; i<grades.length; i++) {
+            for (let j=0; j<idBrackets.length; j++) {
+                if (grades[i].id >= idBrackets[j][0] && grades[i].id <= idBrackets[j][1]) {
+                    gradeBrackets[j].push(grades[i])
+                }
+            }
+        }
+        let reducedGradeBrackets = gradeBrackets.map((el, idx) => ({id: idx, grade: [el[0].grade, el.slice(-1)[0].grade].join(" - ")}))
+        
+        return response.json({success: true, grades: grades, brackets: reducedGradeBrackets});
     } catch (e) {
         console.log(e)
-        return response.json({success: false, grades: []});
+        return response.json({success: false, grades: [], brackets: []});
     }
 })
 
@@ -146,7 +181,26 @@ app.post("/deleteUser", async (request, response) => {
     }
 })
 
+app.post("/insertNewIndoorSession", async (request, response) => {
+    try {
+        let session = request.body.session
+        let res = await insertNewIndoorSession(session)
+        return response.json({success: res.success, message: res.message})
+    } catch (e) {
+        console.log(e)
+    }
+})
 
+app.post("/insertNewHangboardSession", async (request, response) => {
+    try {
+        let session = request.body.session
+        let res = await insertNewHangboardSession(session)
+        return response.json({success: true, message: "Inserted new HangboardSession."})
+    } catch (e) {
+        console.log(e)
+        return response.json({success: false, message: "An error occurred while inserting new hangboard session."})
+    }
+})
 
 
 

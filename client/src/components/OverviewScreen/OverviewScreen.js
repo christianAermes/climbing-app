@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
-import Infobox from './Infobox'
-import Graph from './Graph'
+// import Infobox from './Infobox'
+// import {LineGraph, BarGraph} from './Graph'
+import Summary from "./Summary"
 // import Table from './Table'
 import {postData} from "../../serverRequests"
+import config from "../../config"
 
-import {boulderGradeConversionToFB, boulderGradeConversionToV} from '../../boulderGradeConversion'
+// import {boulderGradeConversionToFB, boulderGradeConversionToV} from '../../boulderGradeConversion'
 
 class OverviewScreen extends Component {
     constructor(props) {
@@ -13,11 +15,11 @@ class OverviewScreen extends Component {
         // this.makedata()
 
         this.state = {
-            indoorData: {data: [], keys: []},
+            indoorData: {boulder: {data: [], keys: []}, routes: {data: [], keys: []}},
             outdoorData: {data: [], keys: []},
             hangboardData: {data: [], keys: []},
             leaderboardData: {data: [], keys: []},
-            boulderGrades: "v",
+            // boulderGrades: "v",
         }
     }
 
@@ -46,17 +48,21 @@ class OverviewScreen extends Component {
 
     }
 
+    
     async componentDidMount() {
-        console.log(this.props)
+        
         document.querySelector(".sidebar button").style.background = "#248499"
         
-        let data_indoorDB = await postData("http://localhost:8000/getIndoorSessions", {username: this.props.username})
-        let indoorData = this.formatClimbingSessionData(data_indoorDB.data)
-        if (data_indoorDB.success) this.setState({indoorData: indoorData})
+        let indoorDataDB = await postData(`${config.SERVER_ADDRESS}/getIndoorSessions`, {username: this.props.username})
+        if (indoorDataDB.success) this.setState({indoorData: indoorDataDB.data})
+        // console.log(indoorDataDB.data)
+        // let data_outdoorDB = await postData(`${config.SERVER_ADDRESS}/getOutdoorSessions`, {username: this.props.username})
+        // let outdoorData = this.formatClimbingSessionData(data_outdoorDB.data)
+        // if (data_outdoorDB.success) this.setState({outdoorData: outdoorData})
 
-        let data_outdoorDB = await postData("http://localhost:8000/getOutdoorSessions", {username: this.props.username})
-        let outdoorData = this.formatClimbingSessionData(data_outdoorDB.data)
-        if (data_outdoorDB.success) this.setState({outdoorData: outdoorData})
+        let hangboardDataDB = await postData(`${config.SERVER_ADDRESS}/getHangboardSessions`, {username: this.props.username})
+        if (hangboardDataDB.success) this.setState({hangboardData: hangboardDataDB.data})
+        // console.log(hangboardDataDB)
     }
 
     makedata() {
@@ -102,30 +108,63 @@ class OverviewScreen extends Component {
     }
     
     render() {
-        let currentRank = this.state.leaderboardData.length>0? this.state.leaderboardData.data.slice(-1)[0] : 1
-        
+        // let currentRank = this.state.leaderboardData.length>0? this.state.leaderboardData.data.slice(-1)[0] : 1
+        // {/* <Graph data={this.state.indoorData.data} datakeys={this.state.indoorData.keys} formatter={this.props.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph> */}
+        // {/* <Graph data={this.state.outdoorData.data} datakeys={this.state.outdoorData.keys} formatter={this.props.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph> */}
+                       
         return (
             
             <div className="main-container">
+                <div className="summary-container">
+                    <Summary 
+                        name={"Indoor Sessions"} 
+                        count={(this.state.indoorData.boulder.data.length+this.state.indoorData.routes.data.length)/2}
+                        data={[this.state.indoorData.boulder.data, this.state.indoorData.routes.data]}
+                        datakeys={[this.state.indoorData.boulder.keys, this.state.indoorData.routes.keys]}
+                        brackets={[this.props.boulderBrackets, this.props.routeBrackets]}
+                        graphTypes={["bar", "bar"]}
+                        titles={["Boulder", "Routes"]}
+                    ></Summary>
+
+                    <Summary 
+                        name={"Outdoor Sessions"} 
+                        count={(this.state.indoorData.boulder.data.length+this.state.indoorData.routes.data.length)/2}
+                        data={[this.state.indoorData.boulder.data, this.state.indoorData.routes.data]}
+                        datakeys={[this.state.indoorData.boulder.keys, this.state.indoorData.routes.keys]}
+                        brackets={[this.props.boulderBrackets, this.props.routeBrackets]}
+                        graphTypes={["bar", "bar"]}
+                        titles={["Boulder", "Routes"]}
+                    ></Summary>
+
+                    <Summary 
+                        name={"Hangboard Sessions"} 
+                        count={this.state.hangboardData.data.length}
+                        data={[this.state.hangboardData.data]}
+                        datakeys={[this.state.hangboardData.keys]}
+                        brackets={[]}
+                        graphTypes={["line"]}
+                        titles={["Max Strength on 20 mm Edge"]}
+                    ></Summary>
+                </div>
                 
-                <div className="infobox-container">
+                {/* <div className="infobox-container">
                     <div className="infobox-container">
-                        <Infobox name={"Indoor Sessions"} count={this.state.indoorData.data.length}></Infobox>
+                        <Infobox name={"Indoor Sessions"} count={(this.state.indoorData.boulder.data.length+this.state.indoorData.routes.data.length)/2}></Infobox>
                         <Infobox name={"Outdoor Sessions"} count={this.state.outdoorData.data.length}></Infobox>
                     </div>
                     <div className="infobox-container">
                         <Infobox name={"Hangboard Sessions"} count={this.state.hangboardData.data.length}></Infobox>
                         <Infobox name={"Leader Board"} count={currentRank}></Infobox>
                     </div>
-                </div>
+                </div> */}
                 <div className="graph-container">
                     <div className="graph-container">
-                        <Graph data={this.state.indoorData.data} datakeys={this.state.indoorData.keys} formatter={this.props.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph>
-                        <Graph data={this.state.outdoorData.data} datakeys={this.state.outdoorData.keys} formatter={this.props.boulderGrades==="fb"? boulderGradeConversionToFB : boulderGradeConversionToV}></Graph>
+                        {/* <BarGraph data={this.state.indoorData.boulder.data} datakeys={this.state.indoorData.boulder.keys} brackets={this.props.boulderBrackets}></BarGraph> */}
+                        {/* <BarGraph data={this.state.indoorData.routes.data} datakeys={this.state.indoorData.routes.keys} brackets={this.props.routeBrackets}></BarGraph> */}
                     </div>
                     <div className="graph-container">
-                        <Graph data={this.state.hangboardData.data} datakeys={this.state.hangboardData.keys}></Graph>
-                        <Graph data={this.state.leaderboardData.data} datakeys={this.state.leaderboardData.keys} invertY={true}></Graph>
+                        {/* <LineGraph data={this.state.hangboardData.data} datakeys={this.state.hangboardData.keys}></LineGraph> */}
+                        {/* <LineGraph data={this.state.leaderboardData.data} datakeys={this.state.leaderboardData.keys} invertY={true}></LineGraph> */}
                         </div>
                 </div>
 
