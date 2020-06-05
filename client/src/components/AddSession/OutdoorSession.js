@@ -1,56 +1,76 @@
 import React, {Component} from 'react'
 import AscentList from "./AscentList"
 
+import {postData} from "../../serverRequests"
+import config from "../../config"
+
 class OutdoorSession extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            // startDate: new Date(),
-            n_ascents: 1,
-            // ascents: [{
-            //     name:  null,
-            //     crag:  null,
-            //     grade: null,
-            //     startDate:  new Date(),
-            //     flash: false,
-            //     top:   false,
-            //     id: 0,
-            // }]
+            boulders: [],
+            routes: [],
+            reset: false,
+
         }
-        this.handleSaveSession  = this.handleSaveSession.bind(this)
+        this.handleSaveSession      = this.handleSaveSession.bind(this)
+        this.handleAscentListUpdate = this.handleAscentListUpdate.bind(this)
     }
-    
-    handleSaveSession() {
-        for (let ascent of this.state.ascents) {
+
+    handleAscentListUpdate(ascentList, climbtype) {
+        if (climbtype===1) {
+            this.setState({boulders: ascentList})
+        }
+        if (climbtype===0) {
+            this.setState({routes: ascentList})
+        }
+    }
+
+    async handleSaveSession() {
+        // console.log(this.props.user_name)
+        for (let i=0; i<this.state.boulders.length; i++) {
+            let ascent = this.state.boulders[i]
+            if (!ascent.flash && !ascent.top) {
+                console.log(`Boulder number ${ascent.id} needs a method of climbing (flash/top)`)
+                return
+            }
+            if (ascent.name === null || ascent.name === "") {
+                console.log(`Boulder number ${ascent.id} needs a name`)
+                return
+            }
+            if (ascent.grade === null) {
+                console.log(`Boulder number ${ascent.id} needs a grade`)
+                return
+            }
+            if (ascent.crag === null || ascent.name === "") {
+                console.log(`Boulder number ${ascent.id} needs a crag`)
+                return
+            }
             console.log(ascent)
         }
+        let res = await postData(`${config.SERVER_ADDRESS}/insertOutdoorAscents`, {boulders: this.state.boulders, routes: this.state.routes, user_name: this.props.user_name, user_id: this.props.user_id})
+        if (res.success) {
+            // this.setState({reset: true})
+            console.log(res)
+            // this.render()
+            // this.setState({reset: false})
+
+        }
     }
     
-    componentDidUpdate() {
-        this.render()
-    }
     componentDidMount() {
         console.log(this.props)
     }
 
 
     render() {
-        // let boulderAscents = this.state.ascents.map(ascent => <Ascent ascent={ascent} climbtype={1} handleAscentChange={this.handleAscentChange} grades={this.props.boulderGrades} key={ascent.id}></Ascent>)
-        // let routeAscents = this.state.ascents.map(ascent => <Ascent ascent={ascent} climbtype={0} handleAscentChange={this.handleAscentChange} grades={this.props.routeGrades} key={ascent.id}></Ascent>)
+        
         return (
             <div className="session">
-                {/* <div className="outdoor-session-climbing-type">Boulder</div> */}
-                {/* {boulderAscents} */}
-                {/* <button className="add-ascent-to-list-btn" onClick={this.handleAddAscent}></button> */}
-                <AscentList climbtype={1} handleAscentChange={this.handleAscentChange} grades={this.props.boulderGrades}></AscentList>
-                {/* <AscentList climbtype={0} handleAscentChange={this.handleAscentChange} grades={this.props.routeGrades}></AscentList> */}
-                {/* <div className="outdoor-session-climbing-type">Routes</div> */}
-                {/* {routeAscents} */}
-                {/* <div className="outdoor-session-btn-container"> */}
-                    {/* <button className="add-ascent-to-list-btn" onClick={this.handleAddAscent}></button> */}
-                    <button id="save-add-sessions-btn" onClick={this.handleSaveSession}>Save Session</button>
-                {/* </div> */}
+                <AscentList reset={this.state.reset} climbtype={1} handleAscentListUpdate={this.handleAscentListUpdate} grades={this.props.boulderGrades}></AscentList>
+                <AscentList reset={this.state.reset} climbtype={0} handleAscentListUpdate={this.handleAscentListUpdate} grades={this.props.routeGrades}></AscentList>
                 
+                <button id="save-add-sessions-btn" onClick={this.handleSaveSession}>Save Session</button>
             </div>
         )
     }

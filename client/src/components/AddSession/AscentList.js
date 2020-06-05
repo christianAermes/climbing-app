@@ -21,19 +21,19 @@ class AscentList extends Component {
         this.handleAscentChange = this.handleAscentChange.bind(this)
     }
 
+    
+
     handleAscentChange(ascent) {
         let changedAscents = this.state.ascents
         let updatedChangedAscents = changedAscents.map(el => el.id===ascent.id? ascent : el)
+        this.props.handleAscentListUpdate(updatedChangedAscents, this.props.climbtype)
         this.setState({ascents: updatedChangedAscents})
     }
     handleRemoveAscent(id) {
         console.log(id, typeof id)
         let ascents = this.state.ascents
         let filteredAscents = ascents.filter(el => el.id !== id)
-        // for (let i=0; i<ascents.length; i++) {
-        //     ascents[i].id = i
-        //     // console.log(ascents[i].name)
-        // }
+        
         this.setState(state => ({
             ascents: filteredAscents
         }))

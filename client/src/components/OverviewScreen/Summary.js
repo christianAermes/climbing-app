@@ -15,10 +15,6 @@ class Summary extends Component {
         return (
             <div className="summary">
                 <Infobox name={this.props.name} count={this.props.count}></Infobox>
-                {/* <div className="graph-container"> */}
-                    {/* <BarGraph data={this.props.data} datakeys={this.props.datakeys} brackets={this.props.brackets}></BarGraph> */}
-                    {/* <BarGraph data={this.state.indoorData.routes.data} datakeys={this.state.indoorData.routes.keys} brackets={this.props.routeBrackets}></BarGraph> */}
-                {/* </div> */}
                 {graphs}
             </div>
         )

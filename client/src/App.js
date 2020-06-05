@@ -17,8 +17,8 @@ const SIDEBAR_HIGHLIGHT_COLOR = "#248499"
 const INITIAL_STATE = {
     login:      false,
     register:   false,
-    overview:   !false,
-    addSession: false,
+    overview:   false,
+    addSession: !false,
     settings:   false,
 
     username: "ich",

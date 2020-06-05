@@ -1,30 +1,4 @@
 import {Connection} from "./Connection"
-// import formatDateString from "../formatDateString"
-
-function formatClimbingSessionData(data) {
-    let formattedData = {data:[], keys: ["Max Grade", "Avg Grade"]}
-    
-    for (let i=0; i<data.length; i++) {
-        let maxGrade = -1
-        let avgGrade = 0
-        let count = 0
-        for (let grade=0; grade<19; grade++) {
-            if (data[i][`boulders_grade${grade}`] > 0 && grade > maxGrade) {
-                maxGrade = grade
-            }
-            avgGrade += data[i][`boulders_grade${grade}`]*grade
-            count += data[i][`boulders_grade${grade}`]
-        }
-        avgGrade /= count
-        let point = {x: i, //data[i].date.substring(0,10), 
-                     "Max Grade": maxGrade,
-                     "Avg Grade": avgGrade
-                    }
-        formattedData.data.push(point)
-    }
-    return formattedData
-
-}
 
 const formatDateString = (dateStr) => {
     let date = new Date(dateStr)

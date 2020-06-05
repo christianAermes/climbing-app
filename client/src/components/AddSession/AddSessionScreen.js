@@ -10,8 +10,8 @@ class AddSessionScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            indoorSession:    !false,
-            outdoorSession:   false,
+            indoorSession:    false,
+            outdoorSession:   !false,
             hangboardSession: false
         }
         this.handleDropDownClick = this.handleDropDownClick.bind(this)
@@ -51,7 +51,7 @@ class AddSessionScreen extends Component {
         if (this.state.indoorSession) {
             session = <IndoorSession boulderBrackets={this.props.boulderBrackets} routeBrackets={this.props.routeBrackets} user_name={this.props.user_name} user_id={this.props.user_id}></IndoorSession>
         } else if (this.state.outdoorSession) {
-            session = <OutdoorSession routeGrades={this.props.routeGrades} boulderGrades={this.props.boulderGrades}></OutdoorSession>
+            session = <OutdoorSession routeGrades={this.props.routeGrades} boulderGrades={this.props.boulderGrades} user_name={this.props.user_name} user_id={this.props.user_id}></OutdoorSession>
         } else if (this.state.hangboardSession) {
             session = <HangboardSession user_name={this.props.user_name} user_id={this.props.user_id}></HangboardSession>
         } else {

@@ -108,7 +108,6 @@ class Ascent extends Component {
     }
     handleNameChange(e) {
         let name = e.target.value
-        console.log(name)
         this.setState(state => ({
             name: name
         }))

@@ -9,6 +9,7 @@ import getOutdoorSessions from "./database/getOudoorSessions"
 import getHangboardSessions from "./database/getHangboardSessions"
 import insertNewHangboardSession from "./database/insertNewHangbordSession"
 import insertNewIndoorSession from "./database/insertNewIndoorSession"
+import insertOutdoorAscents from "./database/insertOutdoorAscents"
 import selectUserSettings from "./database/getUserSettings"
 import getGrades from "./database/getGrades"
 import updateUserSettings from "./database/updateUserSettings"
@@ -189,6 +190,22 @@ app.post("/insertNewIndoorSession", async (request, response) => {
     } catch (e) {
         console.log(e)
     }
+})
+
+app.post("/insertOutdoorAscents", async (request, response) => {
+    let user_name = request.body.user_name
+    let user_id = request.body.user_id
+    let boulders = request.body.boulders
+    let routes = request.body.routes
+    try {
+        let res = await insertOutdoorAscents(user_name, user_id, boulders, routes)
+        return response.json({success: true, message: "Successfully submitted ascents."})
+    } catch(e) {
+        console.log(e)
+        return response.json({success: false, message: "An error occured while submitting ascents."})
+    }
+    
+    // console.log(routes)
 })
 
 app.post("/insertNewHangboardSession", async (request, response) => {
