@@ -25,3 +25,6 @@ yarn-error.log*
 
 # config
 server/src/config.js
+
+# uploads
+server/uploads

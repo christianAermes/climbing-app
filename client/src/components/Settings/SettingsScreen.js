@@ -52,6 +52,7 @@ class SettingsScreen extends Component {
         this.deleteAccount            = this.deleteAccount.bind(this)
         this.closePopUpWindow         = this.closePopUpWindow.bind(this)
         this.confirmDeleteAccount     = this.confirmDeleteAccount.bind(this)
+        this.handleProfileImgUpload   = this.handleProfileImgUpload.bind(this)
     }
 
     getUserSettings() {
@@ -160,18 +161,49 @@ class SettingsScreen extends Component {
             usa_routes: newRouteGrade === "yds"
         })
     }
+    async handleProfileImgUpload(e) {
+
+        let form = document.createElement("form")
+        form.enctype = "multipart/form-data"
+        form.style.display = "none"
+        let input = document.createElement("input")
+        form.appendChild(input)
+        input.type = "file"
+        
+        input.name = "file"
+        input.accept = "image/png, image/png"
+        
+        input.click()
+        input.onchange = async () => {
+            console.log(input.files[0])
+            let url = `${config.SERVER_ADDRESS}/changeProfileImg`
+            const formData = new FormData()
+            formData.append("profileImg", input.files[0])
+            formData.append("username", this.state.username)
+
+            let res = await fetch(url, {
+                method: "POST",
+                body: formData
+            })
+
+            form.remove()
+        
+        }
+
+
+    }
 
 
     render() {
         let popupWindowCONFIRM_CHANGES = this.state.showPopUpWindowCONFIRM_CHANGES? <MessagePopUp message="Saved Changes."></MessagePopUp> : <div></div>
         let popupWindowDELETE = this.state.showPopUpWindowDELETE? <DeleteAccountPopUp closePopUpWindow={this.closePopUpWindow} confirmDeleteAccount={this.confirmDeleteAccount}></DeleteAccountPopUp> : <div></div>
         return (
-            <div className="main-container">
+            <div className="main-container" id="settings-screen">
                 {popupWindowDELETE}
                 {popupWindowCONFIRM_CHANGES}
                 <div className="sub-container">
                     <div className="two-col-grid">
-                        <img className="profile-img" src={DefaultProfileImg} alt="Profile"/>
+                        <img className="profile-img" src={DefaultProfileImg} alt="Profile" onClick={this.handleProfileImgUpload}/>
                         <div className="login-settings">
                             <div className="settings-block">
                                 <input type="password" placeholder="Old Password" id="settings-old-password"></input>

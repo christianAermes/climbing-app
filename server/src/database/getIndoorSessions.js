@@ -46,7 +46,7 @@ const getIndoorSessions = async(username) => {
                     data: [],
                     keys: ["route_bracket_0", "route_bracket_1", "route_bracket_2", "route_bracket_3", "route_bracket_4", "route_bracket_5"]
                 }}
-            console.log(res)
+            // console.log(res)
             for (let i=0; i<res.length; i++) {
                 let boulderPoint = {
                     x: formatDateString(res[i].date),

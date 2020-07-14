@@ -18,8 +18,8 @@ const INITIAL_STATE = {
     login:      false,
     register:   false,
     overview:   false,
-    addSession: !false,
-    settings:   false,
+    addSession: false,
+    settings:   !false,
 
     username: "ich",
     user_id: 8,
@@ -196,7 +196,7 @@ class App extends Component {
         let containerContent = <div></div>
         
         if (this.state.overview) {
-            containerContent = <OverviewScreen boulderBrackets={this.state.boulderBrackets} routeBrackets={this.state.routeBrackets} boulderGrades={this.state.user_settings.boulderGrades} routeGrades={this.state.user_settings.routeGrades} username={this.state.username}></OverviewScreen>
+            containerContent = <OverviewScreen boulderBrackets={this.state.boulderBrackets} routeBrackets={this.state.routeBrackets} boulderGrades={this.state.boulderGrades} routeGrades={this.state.routeGrades} username={this.state.username}></OverviewScreen>
         } else if (this.state.addSession) {
             containerContent = <AddSessionScreen routeGrades={this.state.routeGrades} boulderGrades={this.state.boulderGrades} user_name={this.state.username} user_id={this.state.user_id} boulderBrackets={this.state.boulderBrackets} routeBrackets={this.state.routeBrackets}></AddSessionScreen>
         } else if (this.state.settings) {

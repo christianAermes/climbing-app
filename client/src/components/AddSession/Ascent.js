@@ -32,7 +32,7 @@ class Ascent extends Component {
     }
     removeSelf() {
         console.log("Id of removed ascent: ", this.props.ascent.id)
-        this.props.handleRemoveAscent(this.state.id)
+        this.props.handleRemoveAscent(this.state.id, this.props.climbtype)
     }
     handleDropDownClick() {
         console.log(this.state.name)
@@ -55,7 +55,7 @@ class Ascent extends Component {
             crag: this.state.crag,
             id: this.props.ascent.id
         }
-        this.props.handleAscentChange(ascent)
+        this.props.handleAscentChange(ascent, this.props.climbtype)
     }
     handleMethodSelect(e) {
         let flash = e.target.value==="1"
@@ -73,7 +73,7 @@ class Ascent extends Component {
             crag: this.state.crag,
             id: this.props.ascent.id
         }
-        this.props.handleAscentChange(ascent)
+        this.props.handleAscentChange(ascent, this.props.climbtype)
     }
     handleDateSelect(date) {
         this.setState(state => ({
@@ -88,7 +88,7 @@ class Ascent extends Component {
             crag: this.state.crag,
             id: this.props.ascent.id
         }
-        this.props.handleAscentChange(ascent)
+        this.props.handleAscentChange(ascent, this.props.climbtype)
     }
     handleCragChange(e) {
         let crag = e.target.value
@@ -104,9 +104,10 @@ class Ascent extends Component {
             crag: crag,
             id: this.props.ascent.id
         }
-        this.props.handleAscentChange(ascent)
+        this.props.handleAscentChange(ascent, this.props.climbtype)
     }
     handleNameChange(e) {
+        
         let name = e.target.value
         this.setState(state => ({
             name: name
@@ -120,7 +121,7 @@ class Ascent extends Component {
             crag: this.state.crag,
             id: this.props.ascent.id
         }
-        this.props.handleAscentChange(ascent)
+        this.props.handleAscentChange(ascent, this.props.climbtype)
     }
     
     render() {
@@ -129,7 +130,7 @@ class Ascent extends Component {
                                                     <input type="radio" value={el.id} name={el.grade} checked={this.state.selectedGradeId === el.id} onChange={this.handleGradeSelect}/>
                                                  </div>))
         let dropdown = this.state.showGrades? <div className="dropdown-grades">{grades}</div> : <div></div>
-        // console.log(this.state.name)
+        
         return (
             <div className="ascent-container">
                 <div className="testdiv"><input type="text" placeholder={this.state.placeholder} className="test-input" onChange={this.handleNameChange}/></div>

@@ -1,11 +1,15 @@
 import bcrypt from "bcrypt"
-import express from "express"
+import express, { response } from "express"
 import cors from "cors"
+import fileUpload from "express-fileupload"
+import sharp from "sharp"
+import path from "path"
 
 import userCredentials from "./database/userLogin"
 import insertNewUser from "./database/insertNewUser"
 import getIndoorSessions from "./database/getIndoorSessions"
 import getOutdoorSessions from "./database/getOudoorSessions"
+import getOutdoorAscents from "./database/getOutdoorAscents"
 import getHangboardSessions from "./database/getHangboardSessions"
 import insertNewHangboardSession from "./database/insertNewHangbordSession"
 import insertNewIndoorSession from "./database/insertNewIndoorSession"
@@ -23,6 +27,7 @@ const port = config.serverport
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(fileUpload())
 
 const server = app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
@@ -106,6 +111,20 @@ app.post("/getOutdoorSessions", async (request, response) => {
         let username = request.body.username
         let res = await getOutdoorSessions(username)
         
+        return response.json({success: true, data: res})
+    } catch (e) {
+        console.log(e)
+        return response.json({success: false, data: []})
+    }
+})
+
+app.post("/getOutdoorAscents", async (request, response) => {
+    try {
+        let username = request.body.username
+        let boulderGrades = request.body.boulderGrades
+        let routeGrades = request.body.routeGrades
+        let res = await getOutdoorAscents(username, boulderGrades, routeGrades)
+        // console.log(res)
         return response.json({success: true, data: res})
     } catch (e) {
         console.log(e)
@@ -218,6 +237,66 @@ app.post("/insertNewHangboardSession", async (request, response) => {
         return response.json({success: false, message: "An error occurred while inserting new hangboard session."})
     }
 })
+
+
+
+
+
+
+app.post("/changeProfileImg", async (request, response) => {
+    console.log("New Profile Image")
+    let newImg = request.files.profileImg
+    
+    let username = request.body.username
+    let ext = path.extname(newImg.name)
+
+    let saveName_original = `./uploads/profile_img_${username}.${ext}`
+    let saveName_cropped  = `./uploads/profile_img_cropped_${username}.png`
+
+    // save original img
+    await newImg.mv(saveName_original)
+
+    // crop, resize and save
+    sharp(saveName_original)
+        .resize(200,200)
+        .toFile(saveName_cropped, (err, info) => {
+            if (err) console.log(err)
+            else console.log("Hurray! Cropped img.")
+        })
+    
+    
+    
+    return null
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

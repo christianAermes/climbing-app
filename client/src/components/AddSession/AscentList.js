@@ -4,24 +4,9 @@ import Ascent from "./Ascent"
 class AscentList extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            lastId: 0,
-            ascents: [{
-                name:  null,
-                crag:  null,
-                grade: null,
-                startDate:  new Date(),
-                flash: false,
-                top:   false,
-                id: 0,
-            }]
-        }
         this.handleAddAscent    = this.handleAddAscent.bind(this)
-        this.handleRemoveAscent = this.handleRemoveAscent.bind(this)
         this.handleAscentChange = this.handleAscentChange.bind(this)
     }
-
-    
 
     handleAscentChange(ascent) {
         let changedAscents = this.state.ascents
@@ -29,45 +14,15 @@ class AscentList extends Component {
         this.props.handleAscentListUpdate(updatedChangedAscents, this.props.climbtype)
         this.setState({ascents: updatedChangedAscents})
     }
-    handleRemoveAscent(id) {
-        console.log(id, typeof id)
-        let ascents = this.state.ascents
-        let filteredAscents = ascents.filter(el => el.id !== id)
-        
-        this.setState(state => ({
-            ascents: filteredAscents
-        }))
 
-    }
     handleAddAscent() {
-        let newAscent = {
-            name:  null,
-            crag:  null,
-            grade: null,
-            startDate:  new Date(),
-            flash: false,
-            top:   false,
-            id: this.state.lastId + 1,
-        }
-        console.log("Id of new ascent: ", newAscent.id)
-        let ascents = this.state.ascents
-        ascents.push(newAscent)
-        this.setState(state => ({
-            ascents: ascents,
-            lastId: state.lastId + 1
-        }))
+        this.props.handleAddAscent(this.props.climbtype)
     }
     
-
     render() {
-        // for (let i=0; i<this.state.ascents.length; i++) {
-        //     console.log(this.state.ascents[i].name)
-        // }
-        // for (let ascent of this.state.ascents) {
-        //     console.log(ascent.name)
-        // }
         
-        let ascents = this.state.ascents.map(ascent => <Ascent ascent={ascent} climbtype={this.props.climbtype} handleRemoveAscent={this.handleRemoveAscent} handleAscentChange={this.handleAscentChange} grades={this.props.grades} key={ascent.id}></Ascent>)
+        // let ascents = this.state.ascents.map(ascent => <Ascent ascent={ascent} climbtype={this.props.climbtype} handleRemoveAscent={this.handleRemoveAscent} handleAscentChange={this.handleAscentChange} grades={this.props.grades} key={ascent.id}></Ascent>)
+        let ascents = this.props.ascents.map(ascent => <Ascent ascent={ascent} climbtype={this.props.climbtype} grades={this.props.grades} key={ascent.id} handleRemoveAscent={this.props.handleRemoveAscent} handleAscentChange={this.props.handleAscentChange}></Ascent>)
         let title = this.props.climbtype===1? "Boulder" : this.props.climbtype===0? "Routes" : ""
         
         return (

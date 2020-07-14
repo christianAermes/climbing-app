@@ -151,6 +151,9 @@ input:focus {
 .profile-img {
   max-width: 200px;
 }
+.profile-img:hover {
+  cursor: pointer;
+}
 .settings-block {
   display: grid;
   grid-template-columns: minmax(50px, 1fr);
